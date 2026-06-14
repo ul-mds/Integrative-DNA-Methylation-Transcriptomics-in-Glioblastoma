@@ -1,0 +1,30 @@
+# OS / editor
+.DS_Store
+~$*
+*.swp
+
+# Python
+__pycache__/
+*.py[cod]
+.mypy_cache/
+.pytest_cache/
+.matplotlib/
+.mplconfig/
+
+# Local analysis outputs (regenerate via Codes/ scripts)
+/results/
+/plots/
+*.log
+
+# Manuscript working files (keep locally; supplementary is in Supplementary/)
+MANUSCRIPT_*.docx
+MANUSCRIPT_*.txt
+Cover Letter.docx
+TABLES_*.docx
+docx_extract/
+_*.png
+figures/
+
+# Temp / debug scripts output
+ADDITIONS_*.txt
+AUDIT_*.txt

@@ -20,3 +20,13 @@ See: `D_Validation/`
 
 For detailed rationale and run commands, see `README_GITHUB_CODE_PACKAGE.md`.
 
+## Supplementary materials (repository root)
+
+Submission-ready supplementary files live in `../Supplementary/` and are regenerated with:
+
+```bash
+python update_supplementary_folder.py
+```
+
+See the top-level `README.md` for the full repository layout.
+

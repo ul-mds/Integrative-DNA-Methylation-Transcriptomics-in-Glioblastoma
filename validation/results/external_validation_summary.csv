@@ -1,0 +1,7 @@
+Gene,TCGA_Diff,N_Validated_Datasets,N_Significant,N_Concordant,Validation_Rate
+B4GALT1,156.0,1,0,1,1/1
+EGFR,209.0,2,0,2,2/2
+VASP,282.5,2,0,1,1/2
+GFPT2,183.5,1,0,1,1/1
+PHF11,232.5,1,0,1,1/1
+TSPYL5,223.5,2,0,2,2/2

@@ -1,0 +1,6 @@
+Dataset,Gene,Survival_Diff,P_value,Significant,Note
+TCGA (Test 30%),B4GALT1,-66.0,0.3718820293581635,False,Internal validation
+TCGA (Test 30%),EGFR,250.0,0.0542608734028071,False,Internal validation
+TCGA (Test 30%),TSPYL5,8.0,0.1949277455359431,False,Internal validation
+CGGA,-,-,-,-,"n=84 GBM, median OS=345 days. Expression requires registration."
+GSE119774,-,-,-,-,n=40 GBM. Methylation available. Survival not in GEO.
