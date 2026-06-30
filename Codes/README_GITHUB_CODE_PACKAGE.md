@@ -96,6 +96,38 @@ python validation/scripts/run_external_dataset_validation.py
 
 ---
 
+## E) Supplementary materials generation (Figures SF1–SF8, Tables, Methods)
+
+Include these scripts because they generate the **supplementary figures** and package
+the submission-ready `Supplementary/` folder (Supplementary Figures, Supplementary
+Tables, and Supplementary Methods) reported alongside the manuscript:
+
+- **Supplementary Figures 2, 4, 5 (detailed biomarker / liquid-biopsy / discordance panels)**: `make_supplementary_figures.py`
+- **Supplementary Figure 7 (MGMT methylation similarity)**: `fix_mgmt_supp_fig7.py`
+- **Supplementary Figure 8 (EGFR methylation vs. amplification and mutation)**: `make_supp_fig8.py`
+- **MGMT-similarity analysis (basis of SF7)**: `mgmt_similarity_analysis.py`
+- **MGMT-similar gene summary table**: `mgmt_similar_genes_summary.py`
+- **Supplementary folder packaging (Tables S1–S20, Figures SF1–SF8, Methods)**: `update_supplementary_folder.py`
+
+### How to run (E)
+
+```bash
+# 1) Regenerate supplementary figures
+python E_Supplementary/make_supplementary_figures.py
+python E_Supplementary/fix_mgmt_supp_fig7.py
+python E_Supplementary/make_supp_fig8.py
+
+# 2) (Optional) Recompute the MGMT-similarity analysis behind SF7
+python E_Supplementary/mgmt_similarity_analysis.py
+python E_Supplementary/mgmt_similar_genes_summary.py
+
+# 3) Package the submission-ready Supplementary/ folder
+#    (Supplementary_Tables.xlsx, Supplementary_Figures.docx, Supplementary_Methods.docx)
+python E_Supplementary/update_supplementary_folder.py
+```
+
+---
+
 ## Explicitly excluded (to avoid unnecessary repository clutter)
 
 Do **not** include the following categories in the GitHub “minimum publishable package”, unless a journal specifically requests them:

@@ -17,7 +17,10 @@ from pathlib import Path
 
 plt.rcParams["figure.dpi"] = 300
 plt.rcParams["savefig.dpi"] = 300
-plt.rcParams["font.size"] = 10
+plt.rcParams["font.size"] = 12
+plt.rcParams["font.family"] = "serif"
+plt.rcParams["font.serif"] = ["Times New Roman"]
+plt.rcParams["mathtext.fontset"] = "stix"
 
 # Create output directories
 script_dir = Path(__file__).resolve().parent
@@ -54,9 +57,9 @@ top_30 = filtered_df.head(30).copy()
 
 print("Creating comprehensive visualization...")
 
-fig = plt.figure(figsize=(24, 18))
+fig = plt.figure(figsize=(24, 20))
 # 7 columns: left margin | E/H | gap | F/I | gap | G/J | right margin (equal spread for E,F,G and H,I,J)
-gs = fig.add_gridspec(4, 7, hspace=0.48, wspace=0.45,
+gs = fig.add_gridspec(4, 7, hspace=0.40, wspace=0.35,
                       width_ratios=[0.4, 1, 0.4, 1, 0.4, 1, 0.4])
 
 # 1. Top genes by correlation (horizontal bar)
@@ -65,18 +68,24 @@ top_20_corr = top_30.head(20)
 bars = ax1.barh(range(len(top_20_corr)), top_20_corr['Meth_mRNA_Corr'],
                color='crimson', alpha=0.7, edgecolor='black', linewidth=0.5)
 ax1.set_yticks(range(len(top_20_corr)))
-ax1.set_yticklabels(top_20_corr['Gene'], fontsize=9)
-ax1.set_xlabel('Methylation-mRNA Correlation', fontweight='bold', fontsize=11)
-ax1.set_title('A. Top 20 Genes\n(Negative Meth-mRNA Correlation)', 
-              fontweight='bold', fontsize=12)
+ax1.set_yticklabels(top_20_corr['Gene'], fontsize=9, fontweight='bold')
+ax1.set_xlabel('Methylation-mRNA Correlation', fontweight='bold', fontsize=14)
+ax1.text(-0.05, 1.08, 'a', transform=ax1.transAxes, ha='right', va='top', fontweight='bold', fontsize=16)
 ax1.grid(True, alpha=0.3, axis='x')
 ax1.axvline(0, color='black', linestyle='--', alpha=0.7, linewidth=1)
 ax1.invert_yaxis()
 
 # Add value labels
 for i, (idx, row) in enumerate(top_20_corr.iterrows()):
-    ax1.text(row['Meth_mRNA_Corr'] - 0.02, i, f"{row['Meth_mRNA_Corr']:.3f}",
-            va='center', ha='right', fontsize=8, fontweight='bold')
+    val = row['Meth_mRNA_Corr']
+    if i == 0:
+        # longest bar: place the label inside the bar (to the right) so it does
+        # not overlap the gene name on the y-axis
+        ax1.text(val + 0.025, i, f"{val:.3f}",
+                va='center', ha='left', fontsize=9, fontweight='bold')
+    else:
+        ax1.text(val - 0.02, i, f"{val:.3f}",
+                va='center', ha='right', fontsize=9, fontweight='bold')
 
 # 2. Methylation vs mRNA scatter (top 10)
 ax2 = fig.add_subplot(gs[0, 3:7])
@@ -84,9 +93,17 @@ top_10 = top_30.head(10)
 x_pos = np.arange(len(top_10))
 width = 0.25
 
-meth_means = top_10['Meth_Mean'].values
-mrna_means = np.log10(top_10['mRNA_Mean'].values + 1)  # Log scale
-protein_means = top_10['Protein_Mean'].values
+# z-normalize each modality against the full cascade-gene distribution so the
+# three layers are on a comparable scale (raw values live on different scales:
+# methylation beta 0-1, log10 mRNA ~4-6, protein z-score ~0)
+def _zscore(vals, ref_vals):
+    ref_vals = np.asarray(ref_vals, dtype=float)
+    return (np.asarray(vals, dtype=float) - np.nanmean(ref_vals)) / np.nanstd(ref_vals)
+
+ref_mrna_log = np.log10(filtered_df['mRNA_Mean'].values + 1)
+meth_means = _zscore(top_10['Meth_Mean'].values, filtered_df['Meth_Mean'].values)
+mrna_means = _zscore(np.log10(top_10['mRNA_Mean'].values + 1), ref_mrna_log)
+protein_means = _zscore(top_10['Protein_Mean'].values, filtered_df['Protein_Mean'].values)
 
 bars1 = ax2.bar(x_pos - width, meth_means, width, label='Methylation', 
                alpha=0.7, color='steelblue', edgecolor='black', linewidth=0.5)
@@ -95,29 +112,38 @@ bars2 = ax2.bar(x_pos, mrna_means, width, label='mRNA (log10)',
 bars3 = ax2.bar(x_pos + width, protein_means, width, label='Protein', 
                alpha=0.7, color='lightgreen', edgecolor='black', linewidth=0.5)
 
-ax2.set_xlabel('Genes', fontweight='bold', fontsize=11)
-ax2.set_ylabel('Normalized Values', fontweight='bold', fontsize=11)
-ax2.set_title('B. Top 10 Genes: Methylation, mRNA, and Protein Levels', 
-              fontweight='bold', fontsize=12)
+ax2.set_xlabel('Genes', fontweight='bold', fontsize=14)
+ax2.set_ylabel('Stand.level (z-score)', fontweight='bold', fontsize=14)
+ax2.axhline(0, color='black', linewidth=0.8, alpha=0.6)
+ax2.text(-0.05, 1.0, 'b', transform=ax2.transAxes, ha='right', va='top', fontweight='bold', fontsize=16)
 ax2.set_xticks(x_pos)
-ax2.set_xticklabels(top_10['Gene'], rotation=45, ha='right', fontsize=8)
-ax2.legend(loc='upper right', fontsize=9)
+ax2.set_xticklabels(top_10['Gene'], rotation=45, ha='right', fontsize=11, fontweight='bold')
+ax2.legend(loc='upper right', fontsize=12)
 ax2.grid(True, alpha=0.3, axis='y')
 
 # 3. Correlation heatmap (matplotlib only to avoid backend issues)
 ax3 = fig.add_subplot(gs[1, 0:3])
-corr_data = top_30[['Meth_Mean', 'mRNA_Mean', 'Protein_Mean']].copy()
-corr_data['mRNA_Mean_log'] = np.log10(corr_data['mRNA_Mean'] + 1)
-corr_matrix = corr_data[['Meth_Mean', 'mRNA_Mean_log', 'Protein_Mean']].corr()
-im = ax3.imshow(corr_matrix.values, cmap='RdBu_r', vmin=-1, vmax=1, aspect='equal')
+# Mean of the per-gene (across-patient) correlations over the top 30 cascade genes.
+# This reflects the true cascade direction (high methylation -> low mRNA/protein,
+# mRNA <-> protein positive), unlike a between-gene correlation of mean levels.
+mm_corr = top_30['Meth_mRNA_Corr'].mean()
+mp_corr = top_30['Meth_Protein_Corr'].mean()
+rp_corr = top_30['mRNA_Protein_Corr'].mean()
+corr_matrix = np.array([
+    [1.0, mm_corr, mp_corr],
+    [mm_corr, 1.0, rp_corr],
+    [mp_corr, rp_corr, 1.0],
+])
+im = ax3.imshow(corr_matrix, cmap='RdBu_r', vmin=-1, vmax=1, aspect='equal')
 for i in range(3):
     for j in range(3):
-        ax3.text(j, i, f"{corr_matrix.values[i, j]:.2f}", ha='center', va='center', fontsize=10)
+        ax3.text(j, i, f"{corr_matrix[i, j]:.2f}", ha='center', va='center', fontsize=14, fontweight='bold')
 ax3.set_xticks([0, 1, 2])
 ax3.set_yticks([0, 1, 2])
-ax3.set_xticklabels(['Methylation', 'mRNA (log10)', 'Protein'], fontsize=9)
-ax3.set_yticklabels(['Methylation', 'mRNA (log10)', 'Protein'], fontsize=9)
-ax3.set_title('C. Correlation Heatmap\n(Meth, mRNA, Protein)', fontweight='bold', fontsize=12)
+ax3.set_xticklabels(['Methylation', 'mRNA', 'Protein'], fontsize=12, fontweight='bold',
+                    rotation=30, ha='right', rotation_mode='anchor')
+ax3.set_yticklabels(['Methylation', 'mRNA', 'Protein'], fontsize=12, fontweight='bold')
+ax3.text(-0.05, 1.0, 'c', transform=ax3.transAxes, ha='right', va='top', fontweight='bold', fontsize=16)
 plt.colorbar(im, ax=ax3, shrink=0.8)
 
 # 4. Protein levels distribution
@@ -127,16 +153,17 @@ colors_protein = ['red' if p < 0 else 'blue' for p in top_20_protein['Protein_Me
 bars = ax4.barh(range(len(top_20_protein)), top_20_protein['Protein_Mean'],
                color=colors_protein, alpha=0.7, edgecolor='black', linewidth=0.5)
 ax4.set_yticks(range(len(top_20_protein)))
-ax4.set_yticklabels(top_20_protein['Gene'], fontsize=9)
-ax4.set_xlabel('Protein Mean', fontweight='bold', fontsize=11)
-ax4.set_title('D. Protein Levels\n(Top 20 Genes)', fontweight='bold', fontsize=12)
+ax4.set_yticklabels(top_20_protein['Gene'], fontsize=9, fontweight='bold')
+ax4.set_xlabel('Protein Mean', fontweight='bold', fontsize=14)
+ax4.text(-0.05, 1.08, 'd', transform=ax4.transAxes, ha='right', va='top', fontweight='bold', fontsize=16)
 ax4.grid(True, alpha=0.3, axis='x')
 ax4.axvline(0, color='black', linestyle='--', alpha=0.7, linewidth=1)
 ax4.invert_yaxis()
 
 # 5-7. Scatter plots for top 3 cascade genes (E, F, G) – shifted right toward white space
 top_3_genes = top_30.head(3)
-gene_names = ['E', 'F', 'G']
+gene_names = ['e', 'f', 'g']
+gene_label_y = [1.0, 1.08, 1.08]
 
 for i, (idx, row) in enumerate(top_3_genes.iterrows()):
     ax = fig.add_subplot(gs[2, 1 + i * 2])  # columns 1, 3, 5 – equal gaps between E,F,G
@@ -153,13 +180,12 @@ for i, (idx, row) in enumerate(top_3_genes.iterrows()):
     scatter = ax.scatter(meth_vals, np.log10(mrna_vals + 1),
                         c=np.linspace(0, 1, n_points), cmap='viridis',
                         s=40, alpha=0.7, edgecolors='black', linewidth=0.3)
-    ax.set_xlabel('Methylation', fontweight='bold', fontsize=10)
-    ax.set_ylabel('mRNA (log10)', fontweight='bold', fontsize=10)
-    ax.set_title(f"{gene_names[i]}. {row['Gene']}\n"
-                 f"r={r_val:.4f}, p{p_str}",
-                 fontweight='bold', fontsize=11)
+    ax.set_xlabel('Methylation', fontweight='bold', fontsize=13)
+    ax.set_ylabel('mRNA (log10)', fontweight='bold', fontsize=13)
+    ax.text(-0.05, gene_label_y[i], gene_names[i], transform=ax.transAxes, ha='right', va='top', fontweight='bold', fontsize=16)
     ax.grid(True, alpha=0.3)
-    plt.colorbar(scatter, ax=ax, label='Index', shrink=0.8)
+    cb = plt.colorbar(scatter, ax=ax, label='Index', shrink=0.8)
+    cb.set_label('Index', fontsize=12, fontweight='bold')
 
 # 8-11. Survival by methylation (top 4 significant genes) - replaces H,I,J
 print("Running survival by methylation analysis for top 4 genes...")
@@ -247,17 +273,15 @@ survival_axes = [
     fig.add_subplot(gs_row3[0, 2]),
     fig.add_subplot(gs_row3[0, 3]),
 ]
-panel_labels = ['H', 'I', 'J', 'K']
+panel_labels = ['h', 'i', 'j', 'k']
 if len(survival_results) > 0:
     for i, (ax, res) in enumerate(zip(survival_axes, survival_results[:4])):
         res["km_low"].plot_survival_function(ax=ax, color="blue", linewidth=1.5, label="Low methylation")
         res["km_high"].plot_survival_function(ax=ax, color="red", linewidth=1.5, label="High methylation")
-        pstr = f"p={res['pval']:.4f}" if not np.isnan(res["pval"]) else "p=N/A"
-        ax.set_title(f"{panel_labels[i]}. {res['gene']}\n{pstr} (n_low={res['n_low']}, n_high={res['n_high']})", 
-                     fontweight="bold", fontsize=10)
-        ax.set_xlabel("Time (months)", fontweight='bold', fontsize=9)
-        ax.set_ylabel("Survival probability", fontweight='bold', fontsize=9)
-        ax.legend(loc="lower left", fontsize=7)
+        ax.text(-0.05, 1.08, panel_labels[i], transform=ax.transAxes, ha='right', va='top', fontweight="bold", fontsize=16)
+        ax.set_xlabel("Time (months)", fontweight='bold', fontsize=12)
+        ax.set_ylabel("Survival probability", fontweight='bold', fontsize=12)
+        ax.legend(loc="lower left", fontsize=10)
         ax.grid(True, alpha=0.3)
         ax.set_ylim(-0.05, 1.05)
     
@@ -270,6 +294,11 @@ else:
         ax.axis('off')
     survival_axes[0].text(0.5, 0.5, "Survival data not available", ha='center', va='center', 
                          transform=survival_axes[0].transAxes, fontsize=12)
+
+# Make every axis tick label (X and Y coordinate values/names) bold
+for _ax in fig.axes:
+    for _lbl in _ax.get_xticklabels() + _ax.get_yticklabels():
+        _lbl.set_fontweight('bold')
 
 # Remove title (caption will be provided separately)
 plt.savefig(plots_dir / "high_meth_low_expr_low_protein_comprehensive.png", 

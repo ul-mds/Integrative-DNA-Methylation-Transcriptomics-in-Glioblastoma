@@ -1,6 +1,6 @@
 # Codes (GitHub-ready layout)
 
-This folder contains the **minimal publishable code package**, organized into four sections matching the manuscript’s reproducibility needs.
+This folder contains the **minimal publishable code package**, organized into five sections matching the manuscript’s reproducibility needs.
 
 ## A) Core multi-omics analysis
 
@@ -18,15 +18,21 @@ See: `C_Tables/`
 
 See: `D_Validation/`
 
+## E) Supplementary materials generation (Figures SF1–SF8, Tables, Methods)
+
+See: `E_Supplementary/`
+
+These scripts regenerate the submission-ready supplementary figures and package
+the `../Supplementary/` folder (Supplementary Figures, Tables, and Methods).
+
 For detailed rationale and run commands, see `README_GITHUB_CODE_PACKAGE.md`.
 
-## Supplementary materials (repository root)
+## Supplementary output folder (repository root)
 
 Submission-ready supplementary files live in `../Supplementary/` and are regenerated with:
 
 ```bash
-python update_supplementary_folder.py
+python Codes/E_Supplementary/update_supplementary_folder.py
 ```
 
 See the top-level `README.md` for the full repository layout.
-
