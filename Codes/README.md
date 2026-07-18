@@ -18,7 +18,9 @@ See: `C_Tables/`
 
 See: `D_Validation/`
 
-## E) Supplementary materials generation (Figures SF1–SF8, Tables, Methods)
+Includes TCGA internal and GEO external validation scripts, CSV results, and summary plots under `D_Validation/validation/`.
+
+## E) Supplementary materials generation (Figures SF1–SF11, Tables, Methods)
 
 See: `E_Supplementary/`
 

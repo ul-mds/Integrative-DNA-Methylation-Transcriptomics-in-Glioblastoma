@@ -1,0 +1,2 @@
+dataset,n_total,n_GBM,median_OS_days,status
+CGGA_mRNAseq325,325,84,345.0,clinical_only_no_expression

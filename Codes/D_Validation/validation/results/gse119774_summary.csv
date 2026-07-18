@@ -1,0 +1,2 @@
+dataset,n_GBM_samples,n_probes_used,mean_methylation_range,median_methylation,status
+GSE119774,40,100000,0.493-0.939,0.5843907051610668,methylation_available_no_survival_no_probe_gene_mapping

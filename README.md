@@ -6,9 +6,13 @@ Integrative analysis of DNA methylation, mRNA expression, and protein abundance 
 
 | Path | Description |
 |------|-------------|
-| [`Codes/`](Codes/) | Minimal reproducible analysis scripts (Figures 1–5, Tables 1–5, validation) |
-| [`Supplementary/`](Supplementary/) | Supplementary Tables S1–S20, Supplementary Figures SF1–SF7, extended methods |
-| [`validation/`](validation/) | Internal (TCGA train/test) and external (GSE7696, GSE230770) biomarker validation |
+| [`Codes/A_Core/`](Codes/A_Core/) | Core multi-omics integration and cascade discovery |
+| [`Codes/B_Figures/`](Codes/B_Figures/) | Main figure generation (Figures 1–5) |
+| [`Codes/C_Tables/`](Codes/C_Tables/) | Main table generation (Tables 1–5) |
+| [`Codes/D_Validation/`](Codes/D_Validation/) | Internal (TCGA train/test) and external (GSE7696, GSE230770) validation |
+| [`Codes/E_Supplementary/`](Codes/E_Supplementary/) | Supplementary figure generation (SF1–SF8) and `Supplementary/` packaging |
+| [`Supplementary/`](Supplementary/) | Supplementary Tables S1–S20, Supplementary Figures SF1–SF8, extended methods |
+| [`validation/`](validation/) | Validation inputs, scripts, and result outputs |
 
 ## Quick start
 
@@ -24,7 +28,7 @@ python validation/scripts/run_tcga_internal_validation.py
 python validation/scripts/run_external_dataset_validation.py
 
 # Regenerate supplementary materials (Tables, Figures, Methods)
-python update_supplementary_folder.py
+python Codes/E_Supplementary/update_supplementary_folder.py
 ```
 
 ## Supplementary materials
@@ -36,7 +40,7 @@ python update_supplementary_folder.py
 Regenerate after updating analysis outputs:
 
 ```bash
-python update_supplementary_folder.py
+python Codes/E_Supplementary/update_supplementary_folder.py
 ```
 
 ## Citation

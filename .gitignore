@@ -28,3 +28,8 @@ figures/
 # Temp / debug scripts output
 ADDITIONS_*.txt
 AUDIT_*.txt
+
+# Large GEO/raw cohort downloads (scripts can re-fetch)
+validation/external_cohort/**/*.gz
+validation/external_cohort/**/*.txt.gz
+Codes/D_Validation/validation/external_cohort/**/*.gz
