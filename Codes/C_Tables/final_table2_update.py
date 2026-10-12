@@ -3,9 +3,14 @@
 Update Table 2 with complete survival data
 """
 
+from pathlib import Path
+
 from docx import Document
 
-doc_path = '/Users/senol/Desktop/GBM/Methylation_Transcriptomics/MANUSCRIPT_NATURE_COMMUNICATIONS_FINAL.docx'
+REPO_ROOT = Path(__file__).resolve().parents[2]
+doc_path = REPO_ROOT / "BJC" / "Revised BJC Manuscript.docx"
+if not doc_path.exists():
+    doc_path = REPO_ROOT / "BJC Manuscript.docx"
 
 print("Loading Word document...")
 doc = Document(doc_path)

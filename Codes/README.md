@@ -29,6 +29,8 @@ the `../Supplementary/` folder (Supplementary Figures, Tables, and Methods).
 
 For detailed rationale and run commands, see `README_GITHUB_CODE_PACKAGE.md`.
 
+**GitHub:** https://github.com/ul-mds/Integrative-DNA-Methylation-Transcriptomics-in-Glioblastoma/tree/main/Codes
+
 ## Supplementary output folder (repository root)
 
 Submission-ready supplementary files live in `../Supplementary/` and are regenerated with:

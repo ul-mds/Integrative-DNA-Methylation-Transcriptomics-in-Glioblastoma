@@ -24,6 +24,11 @@ warnings.filterwarnings('ignore')
 
 from pathlib import Path
 import os
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from repo_paths import REPO_ROOT, data_file
+
 
 # Set style
 plt.style.use('seaborn-v0_8-whitegrid')
@@ -50,7 +55,7 @@ print("Step 1: Loading data...")
 print("-" * 80)
 
 # Load clinical data
-clinical_file = "../clinical_patient.txt"
+clinical_file = str(data_file('clinical_patient.txt'))
 clinical = pd.read_csv(clinical_file, sep="\t", skiprows=4)
 clinical.columns = clinical.columns.str.strip()
 clinical['PATIENT_ID'] = clinical['PATIENT_ID'].str.strip()
@@ -71,13 +76,13 @@ print(f"Recurrence days available: {recurrence_days}")
 
 # Load methylation data (sample for speed)
 print("Loading methylation data...")
-methylation_file = "../methylation_epic.txt"
+methylation_file = str(data_file('methylation_epic.txt'))
 methylation = pd.read_csv(methylation_file, sep="\t", nrows=10000)  # Sample
 print(f"Methylation data: {methylation.shape}")
 
 # Load mRNA data
 print("Loading mRNA data...")
-mrna_file = "../mrna_seq_fpkm.txt"
+mrna_file = str(data_file("mrna_seq_fpkm.txt"))
 mrna = pd.read_csv(mrna_file, sep="\t")
 print(f"mRNA data: {mrna.shape}")
 

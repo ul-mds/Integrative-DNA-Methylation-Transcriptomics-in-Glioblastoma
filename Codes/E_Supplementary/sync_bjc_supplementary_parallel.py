@@ -16,11 +16,17 @@ from pathlib import Path
 from docx import Document
 from docx.enum.text import WD_COLOR_INDEX
 
-ROOT = Path("/Users/senol/Desktop/GBM/Methylation_Transcriptomics")
-DOC = ROOT / "BJC Manuscript.docx"
+ROOT = Path(__file__).resolve().parents[2]
+DOC = ROOT / "BJC" / "Revised BJC Manuscript.docx"
+if not DOC.exists():
+    DOC = ROOT / "BJC Manuscript.docx"
 BJC = ROOT / "BJC"
 SF_DIR = BJC / "Supplementary_Figures"
+if not SF_DIR.is_dir():
+    SF_DIR = BJC / "Supplementary" / "Supplementary_Figures"
 ST_DIR = BJC / "Supplementary_Tables"
+if not ST_DIR.is_dir():
+    ST_DIR = BJC / "Supplementary"
 BACKUP = ROOT / "BJC Manuscript.backup_pre_bjc_sync.docx"
 
 # Legacy file number -> manuscript (BJC submission) number
@@ -211,14 +217,25 @@ def update_readme():
 
 
 def main():
+    if not DOC.exists():
+        raise FileNotFoundError(f"BJC manuscript not found: {DOC}")
+
     shutil.copy2(DOC, BACKUP)
     print(f"Backup: {BACKUP}")
 
     print("\n=== Renumber BJC Supplementary_Figures PNGs ===")
-    renumber_sf_pngs(SF_DIR)
+    if SF_DIR.is_dir() and any(SF_DIR.glob("Supplementary_Figure_*.png")):
+        renumber_sf_pngs(SF_DIR)
+    else:
+        print(f"  Skip PNG renumber (no figures in {SF_DIR})")
 
     print("\n=== Verify BJC Supplementary_Tables ===")
-    verify_table_files(ST_DIR)
+    if (ST_DIR / "Supplementary_Table_1.xlsx").exists():
+        verify_table_files(ST_DIR)
+    elif (ST_DIR / "Supplementary_Tables.xlsx").exists():
+        print(f"  Combined workbook present: {ST_DIR / 'Supplementary_Tables.xlsx'}")
+    else:
+        raise FileNotFoundError(f"No supplementary tables in {ST_DIR}")
 
     print("\n=== Update manuscript ===")
     doc = Document(DOC)

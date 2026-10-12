@@ -22,8 +22,8 @@ print()
 
 # Load data
 print("Loading data...")
-methylation_file = "../methylation_epic.txt"
-protein_file = "../protein_quantification.txt"
+methylation_file = str(data_file('methylation_epic.txt'))
+protein_file = str(data_file('protein_quantification.txt'))
 
 # Load methylation (read in chunks to handle large file)
 print("Loading methylation data (this may take a while)...")
@@ -151,6 +151,11 @@ print(top_20_discordant[['Gene', 'Meth_Protein_Corr', 'Abs_Meth_Protein_Corr', '
 # Check first letters
 first_letters = [g[0] for g in top_20_discordant['Gene'].tolist()]
 from collections import Counter
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from repo_paths import REPO_ROOT, data_file
+
 letter_counts = Counter(first_letters)
 print(f"\nFirst letter distribution in top 20:")
 for letter, count in sorted(letter_counts.items()):

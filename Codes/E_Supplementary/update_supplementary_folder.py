@@ -22,13 +22,14 @@ from docx.shared import Inches, Pt
 from openpyxl import load_workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
 
-BASE = Path(__file__).resolve().parent
+BASE = Path(__file__).resolve().parents[2]
 SUPP_DIR = BASE / "Supplementary"
 RESULTS_DIR = BASE / "results"
 NOVEL_DIR = RESULTS_DIR / "novel_analyses"
-VALIDATION_DIR = BASE / "validation" / "results"
+VALIDATION_ROOT = BASE / "Codes" / "D_Validation" / "validation"
+VALIDATION_DIR = VALIDATION_ROOT / "results"
 PLOTS_DIR = BASE / "plots"
-VALIDATION_PLOTS = BASE / "validation" / "plots"
+VALIDATION_PLOTS = VALIDATION_ROOT / "plots"
 COX_PATH = RESULTS_DIR / "nature_communications" / "cox_regression_age_sex.csv"
 
 BIOMARKERS = ["B4GALT1", "EGFR", "VASP", "GFPT2", "PHF11", "TSPYL5"]
@@ -464,8 +465,10 @@ def update_supplementary_tables() -> Path:
 
 
 def _resolve_image(img_name: str) -> Path | None:
-    if img_name.startswith("../"):
-        p = (PLOTS_DIR / img_name).resolve()
+    if img_name.startswith("../validation/"):
+        p = VALIDATION_PLOTS / Path(img_name).name
+    elif img_name.startswith("../"):
+        p = (BASE / img_name.removeprefix("../")).resolve()
     else:
         p = PLOTS_DIR / img_name
     return p if p.exists() else None

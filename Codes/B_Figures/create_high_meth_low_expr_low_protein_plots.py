@@ -14,6 +14,10 @@ import warnings
 warnings.filterwarnings("ignore")
 
 from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from repo_paths import REPO_ROOT, data_file
 
 plt.rcParams["figure.dpi"] = 300
 plt.rcParams["savefig.dpi"] = 300
@@ -24,8 +28,7 @@ plt.rcParams["mathtext.fontset"] = "stix"
 
 # Create output directories
 script_dir = Path(__file__).resolve().parent
-parent_dir = script_dir.parent
-plots_dir = script_dir / "plots"
+plots_dir = REPO_ROOT / "plots"
 plots_dir.mkdir(exist_ok=True)
 
 print("="*80)
@@ -189,8 +192,8 @@ for i, (idx, row) in enumerate(top_3_genes.iterrows()):
 
 # 8-11. Survival by methylation (top 4 significant genes) - replaces H,I,J
 print("Running survival by methylation analysis for top 4 genes...")
-clinical_file = parent_dir / "clinical_patient.txt"
-methylation_file = parent_dir / "methylation_epic.txt"
+clinical_file = data_file("clinical_patient.txt")
+methylation_file = data_file("methylation_epic.txt")
 
 survival_results = []
 if clinical_file.exists() and methylation_file.exists():

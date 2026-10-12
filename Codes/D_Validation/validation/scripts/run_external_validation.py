@@ -30,7 +30,7 @@ from lifelines.statistics import logrank_test
 BIOMARKERS = ['B4GALT1', 'EGFR', 'VASP', 'GFPT2', 'PHF11', 'TSPYL5']
 
 # Paths
-BASE = Path(__file__).resolve().parent.parent.parent.parent  # GBM root
+BASE = Path(__file__).resolve().parents[4]
 VALIDATION_DIR = Path(__file__).resolve().parent.parent
 EXTERNAL_DIR = VALIDATION_DIR / "external_cohort"
 EXTERNAL_DIR.mkdir(parents=True, exist_ok=True)
@@ -111,7 +111,7 @@ def run_survival_analysis(gene_values, clinical_df, time_col, event_col,
 
 def load_tcga_biomarker_results():
     """Load TCGA biomarker survival results."""
-    p = BASE / "Methylation_Transcriptomics" / "results" / "biomarker_survival_analysis.csv"
+    p = BASE / "results" / "biomarker_survival_analysis.csv"
     if p.exists():
         return pd.read_csv(p)
     return None

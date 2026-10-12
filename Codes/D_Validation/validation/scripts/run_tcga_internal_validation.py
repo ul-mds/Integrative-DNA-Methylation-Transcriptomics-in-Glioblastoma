@@ -12,7 +12,7 @@ from lifelines import KaplanMeierFitter
 from lifelines.statistics import logrank_test
 
 BIOMARKERS = ['B4GALT1', 'EGFR', 'VASP', 'GFPT2', 'PHF11', 'TSPYL5']
-BASE = Path(__file__).resolve().parent.parent.parent.parent
+BASE = Path(__file__).resolve().parents[4]
 METH_FILE = BASE / "methylation_epic.txt"
 CLINICAL_FILE = BASE / "clinical_patient.txt"
 VALIDATION_DIR = Path(__file__).resolve().parent.parent

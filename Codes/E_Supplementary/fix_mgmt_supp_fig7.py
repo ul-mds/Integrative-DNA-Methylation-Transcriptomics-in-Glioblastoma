@@ -12,7 +12,11 @@ the original weights, rewrites the CSV, and regenerates the figure.
 import numpy as np
 import pandas as pd
 from pathlib import Path
+import sys
 from scipy import stats
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from repo_paths import REPO_ROOT, data_file
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -20,8 +24,8 @@ plt.rcParams["font.family"] = "serif"
 plt.rcParams["font.serif"] = ["Times New Roman"]
 plt.rcParams["mathtext.fontset"] = "stix"
 
-BASE = Path("/Users/senol/Desktop/GBM/Methylation_Transcriptomics")
-METH = "/Users/senol/Desktop/GBM/methylation_epic.txt"
+BASE = REPO_ROOT
+METH = data_file("methylation_epic.txt")
 CSV = BASE / "results" / "mgmt_similarity_analysis_all_genes.csv"
 NROWS = 100000  # match original analysis window
 

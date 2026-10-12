@@ -15,6 +15,11 @@ import warnings
 warnings.filterwarnings('ignore')
 
 from pathlib import Path
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from repo_paths import REPO_ROOT, data_file
+
 
 # Set style
 plt.style.use('seaborn-v0_8-whitegrid')
@@ -41,7 +46,7 @@ print("Step 1: Loading methylation data...")
 print("-" * 80)
 
 # Load methylation data
-methylation_file = "../methylation_epic.txt"
+methylation_file = str(data_file('methylation_epic.txt'))
 print("Loading methylation data (this may take a while)...")
 
 # Read methylation data - use larger sample for better coverage

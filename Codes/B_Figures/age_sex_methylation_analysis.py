@@ -15,6 +15,11 @@ import warnings
 warnings.filterwarnings('ignore')
 
 from pathlib import Path
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from repo_paths import REPO_ROOT, data_file
+
 
 # Set style
 plt.style.use('seaborn-v0_8-whitegrid')
@@ -40,7 +45,7 @@ print()
 print("Step 1: Loading clinical data...")
 print("-" * 80)
 
-clinical_file = "../clinical_patient.txt"
+clinical_file = str(data_file('clinical_patient.txt'))
 clinical = pd.read_csv(clinical_file, sep="\t", skiprows=4)
 clinical.columns = clinical.columns.str.strip()
 clinical['PATIENT_ID'] = clinical['PATIENT_ID'].str.strip()
@@ -115,7 +120,7 @@ print()
 print("Step 2: Loading methylation data...")
 print("-" * 80)
 
-methylation_file = "../methylation_epic.txt"
+methylation_file = str(data_file('methylation_epic.txt'))
 print("Loading methylation data (this may take a while)...")
 
 # Read methylation data

@@ -28,7 +28,7 @@ except ImportError:
 
 BIOMARKERS = ['B4GALT1', 'EGFR', 'VASP', 'GFPT2', 'PHF11', 'TSPYL5']
 
-BASE = Path(__file__).resolve().parent.parent.parent.parent
+BASE = Path(__file__).resolve().parents[4]
 VALIDATION_DIR = Path(__file__).resolve().parent.parent
 EXTERNAL_DIR = VALIDATION_DIR / "external_cohort"
 PLOTS_DIR = VALIDATION_DIR / "plots"

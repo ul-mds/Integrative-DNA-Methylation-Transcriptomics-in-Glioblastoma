@@ -13,7 +13,7 @@ import gzip
 import subprocess
 import sys
 
-BASE = Path(__file__).resolve().parent.parent.parent.parent
+BASE = Path(__file__).resolve().parents[4]
 VALIDATION_DIR = Path(__file__).resolve().parent.parent
 EXTERNAL_DIR = VALIDATION_DIR / "external_cohort"
 RESULTS_DIR = VALIDATION_DIR / "results"
@@ -28,7 +28,7 @@ def run_tcga_validation():
     """TCGA internal validation."""
     print("\n=== TCGA Internal Validation ===")
     subprocess.run([sys.executable, str(VALIDATION_DIR / "scripts" / "run_tcga_internal_validation.py")],
-                   cwd=str(BASE / "Methylation_Transcriptomics"), check=False)
+                   cwd=str(BASE), check=False)
     return RESULTS_DIR / "tcga_internal_validation.csv"
 
 

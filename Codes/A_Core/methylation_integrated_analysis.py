@@ -27,7 +27,12 @@ import warnings
 warnings.filterwarnings('ignore')
 
 import os
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from repo_paths import REPO_ROOT, data_file
+
 
 # Set style
 plt.style.use('seaborn-v0_8-darkgrid')
@@ -52,7 +57,7 @@ print("Step 1: Loading data...")
 print("-" * 80)
 
 # Load clinical data
-clinical_file = "../clinical_patient.txt"
+clinical_file = str(data_file('clinical_patient.txt'))
 clinical = pd.read_csv(clinical_file, sep="\t", skiprows=4)
 clinical.columns = clinical.columns.str.strip()
 clinical['PATIENT_ID'] = clinical['PATIENT_ID'].str.strip()
@@ -61,18 +66,18 @@ clinical.loc[clinical['VITAL_STATUS'] == 'Living', 'OS_DAYS'] = clinical.loc[cli
 clinical['OS_EVENT'] = (clinical['VITAL_STATUS'] == 'Deceased').astype(int)
 
 # Load mRNA data
-mrna_file = "../mrna_seq_fpkm.txt"
+mrna_file = str(data_file("mrna_seq_fpkm.txt"))
 mrna = pd.read_csv(mrna_file, sep="\t")
 mrna.columns = mrna.columns.str.strip()
 
 # Load protein data
-protein_file = "../protein_quantification.txt"
+protein_file = str(data_file('protein_quantification.txt'))
 protein = pd.read_csv(protein_file, sep="\t")
 protein.columns = protein.columns.str.strip()
 
 # Load methylation data - sample for efficiency (can be expanded)
 print("Loading methylation data (sampling for efficiency)...")
-methylation_file = "../methylation_epic.txt"
+methylation_file = str(data_file('methylation_epic.txt'))
 
 # Read methylation data in chunks
 print("Reading methylation data...")

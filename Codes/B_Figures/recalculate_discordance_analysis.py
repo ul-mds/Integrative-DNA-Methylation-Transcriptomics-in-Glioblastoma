@@ -13,6 +13,11 @@ import warnings
 warnings.filterwarnings('ignore')
 
 from pathlib import Path
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from repo_paths import REPO_ROOT, data_file
+
 
 script_dir = Path(__file__).resolve().parent
 output_dir = script_dir / "results"
@@ -20,8 +25,8 @@ plots_dir = script_dir / "plots"
 
 # Load data
 print("Loading data...")
-methylation_file = "../methylation_epic.txt"
-protein_file = "../protein_quantification.txt"
+methylation_file = str(data_file('methylation_epic.txt'))
+protein_file = str(data_file('protein_quantification.txt'))
 
 # Load methylation (sample first 20000 rows for speed)
 methylation = pd.read_csv(methylation_file, sep="\t", nrows=20000)
